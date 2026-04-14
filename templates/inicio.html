@@ -1,13 +1,88 @@
-{% load django %}
+{% load django_bootstrap5 %}
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Liga Simulada | Corrupta</title>
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfr2e3MNvNP3vWYyjpoWGYPhFPHuGTK3qHjg&s">
 </head>
 <body>
+<div class="navbar-container">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src=https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfr2e3MNvNP3vWYyjpoWGYPhFPHuGTK3qHjg&s0" alt="Logo" class="nav-logo">
+            <span class="nav-title">Liga Corrupta</span>
+        </div>
 
-<h1>Inicio</h1>
+        <ul class="nav-links">
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="{% url 'clasi' %}">Clasificación</a></li>
+            <li><a href="#equipo">Equipo</a></li>
+        </ul>
+    </nav>
+</div>
+
+<style>
+    .navbar-container {
+        background-color: #fefefe;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 0.5rem 2rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-logo {
+        height: 40px;
+        width: 40px;
+        border-radius: 8px;
+    }
+
+    .nav-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #555;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        color: #00d4d7;
+    }
+
+    /* Responsivo básico */
+    @media (max-width: 600px) {
+        .navbar {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
 </body>
 </html>
