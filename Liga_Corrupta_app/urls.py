@@ -6,4 +6,6 @@ urlpatterns = [
 
     path("clasificacion/", views.clasi, name="clasi"),
 
+    path("mi-club/", views.mi_club, name="mi_club"),
+
 ]
