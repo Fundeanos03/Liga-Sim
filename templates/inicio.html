@@ -1,25 +1,76 @@
 {% extends 'base.html' %}
 
-{% block titulo %}Inicio | Liga Corrupta{% endblock %}
+{% block content %}
 
-{% block contenido %}
-<section class="bienvenida text-center mb-5">
-    <h1>Bienvenido a la Liga Corrupta</h1>
-    <p>Se viene llorao de casa</p>
-</section>
+<div class="alert banner-card mb-5 d-flex justify-content-between align-items-center">
+    <div>
+        <h5 class="mb-1 text-danger fw-bold">⚠️ NOTIFICACIÓN DEL COMITÉ</h5>
+        <p class="mb-0">Se han detectado maletines sospechosos en la jornada 12. Se ruega discreción.</p>
+    </div>
+    <button class="btn btn-outline-dark btn-sm">Leer más</button>
+</div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card h-100 d-flex flex-column justify-content-center text-center">
-            <h3>Próximo Partido</h3>
-            <p><strong>Tu Equipo</strong> vs <strong>Rival Eterno</strong></p>
+<div class="row">
+    <div class="col-md-8">
+
+        <h3 class="header-section">Últimos Resultados</h3>
+        <div class="card banner-card mb-4">
+            <div class="card-body text-center">
+                <div class="row align-items-center">
+                    <div class="col"><strong>Los Cojos FC</strong></div>
+                    <div class="col-2"><span class="badge bg-dark fs-4">2 - 1</span></div>
+                    <div class="col"><strong>Sobornos United</strong></div>
+                </div>
+                <hr>
+                <div class="row align-items-center text-muted">
+                    <div class="col">Mafia del Var</div>
+                    <div class="col-2 fs-5">0 - 3</div>
+                    <div class="col">Despacho CF</div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="header-section">Próximos Partidos</h3>
+        <div class="list-group mb-4">
+            <div class="list-group-item border-0 banner-card mb-2 d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">Sábado, 18:00h</span><br>
+                    <strong>Tacañones vs Rompehuesos</strong>
+                </div>
+                <button class="btn btn-corrupta btn-sm">Apostar</button>
+            </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card h-100 d-flex flex-column justify-content-center text-center">
-            <h3>Estado del Mercado</h3>
-            <span class="badge bg-success">ABIERTO</span>
+
+    <div class="col-md-4">
+        <h3 class="header-section">Mercado de Fichajes</h3>
+        <div class="card banner-card border-0">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                    <div>
+                        <h6 class="mb-0">Paco "El Rápido"</h6>
+                        <small class="text-muted">A: Los Cojos FC</small>
+                    </div>
+                    <span class="text-success fw-bold">15M€</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                    <div>
+                        <h6 class="mb-0">Juani "Maletines"</h6>
+                        <small class="text-muted">A: Despacho CF</small>
+                    </div>
+                    <span class="text-success fw-bold">50M€</span>
+                </li>
+            </ul>
+            <div class="card-footer bg-transparent border-0">
+                <a href="#" class="btn btn-dark btn-sm w-100">Ver todo el mercado</a>
+            </div>
+        </div>
+
+        <div class="mt-4 p-3 bg-light rounded text-center border">
+            <p class="small text-muted mb-1">Patrocinador oficial</p>
+            <h5 class="fw-bold text-dark">BANCO DE SUIZA</h5>
         </div>
     </div>
 </div>
+
 {% endblock %}

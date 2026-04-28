@@ -1,0 +1,109 @@
+/* static/css/global.css */
+
+:root {
+    --primary-white: #ffffff;
+    --accent-gold: #df933d;
+    --dark-pitch: #30100e;
+    --gray-text: #565655;
+    --light-gray: #f8f9fa;
+}
+
+body {
+    background-color: var(--primary-white);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--dark-pitch);
+}
+
+/* Banners y Tarjetas */
+.banner-card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s;
+    background: var(--primary-white);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-left: 5px solid var(--accent-gold);
+}
+
+.banner-card:hover {
+    transform: translateY(-5px);
+}
+
+.header-section {
+    color: var(--dark-pitch);
+    border-bottom: 2px solid var(--accent-gold);
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    padding-bottom: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Botones personalizados */
+.btn-corrupta {
+    background-color: var(--accent-gold);
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.btn-corrupta:hover {
+    background-color: var(--dark-pitch);
+    color: var(--accent-gold);
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: var(--primary-white);
+    border-bottom: 3px solid var(--accent-gold);
+}
+
+.nav-link {
+    color: var(--dark-pitch) !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--accent-gold) !important;
+}
+
+/* Añadir a static/css/global.css */
+
+.row-cols-md-3 .card, .row-cols-md-2 .card {
+    transition: all 0.3s ease;
+}
+
+/* Efecto de elevación al pasar el ratón */
+.banner-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    border-color: var(--accent-gold) !important;
+}
+
+/* Estilo para las secciones de administración */
+.bg-dark .header-section {
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+}
+
+.img_peque{
+    width: 30px;
+    height: auto;
+}
+
+
+/* Ajustes para el menú colapsado en móvil */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: var(--primary-white);
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        margin-top: 10px;
+    }
+    .nav-link {
+        border-bottom: 1px solid #eee;
+        padding: 12px 0;
+    }
+    .nav-link:last-child {
+        border-bottom: none;
+    }
+}

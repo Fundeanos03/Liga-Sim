@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card banner-card border-0 shadow-sm sticky-top" style="top: 100px;">
+            <div class="card-body">
+                <h5 class="fw-bold mb-4" style="color: var(--dark-pitch);">
+                    <span style="color: var(--accent-gold);">+</span> Registrar Equipo
+                </h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-corrupta w-100 mt-2">Guardar Equipo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h3 class="header-section">Equipos Registrados</h3>
+        
+        <div class="table-responsive bg-white rounded shadow-sm p-3">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr class="text-muted small">
+                        <th>Nombre</th>
+                        <th>Presidente</th>
+                        <th>Estadio</th>
+                         <th>Entrenador</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for equipo in equipos %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="fs-4 me-2">
+                                    <img src="{{ equipo.escudo }}" class="img_peque">
+                                </span>
+                                <div>
+                                    <span class="fw-bold">{{ equipo.nombre }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ equipo.presidente }}</td>
+                        <td class="text-muted small">{{ equipo.estadio }}</td>
+                        <td class="text-muted small">{{ equipo.entrenador }}</td>
+                        <td class="text-end">
+                            <div class="btn-group shadow-sm">
+                                <a href="{% url 'editar_equipo' equipo.id %}" class="btn btn-sm btn-outline-dark" title="Editar">
+                                    ✎
+                                </a>
+                                <a href="{% url 'eliminar_equipo' equipo.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    🗑️
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted italic">
+                            No hay equipos registrados en la red de corrupción todavía.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
