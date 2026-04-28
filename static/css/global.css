@@ -53,8 +53,8 @@ body {
 
 /* Navbar */
 .navbar-custom {
-    background-color: var(--primary-white);
-    border-bottom: 3px solid var(--accent-gold);
+    background-color: var(--accent-gold);
+    border-bottom: 3px solid var(--dark-pitch);
 }
 
 .nav-link {
@@ -63,7 +63,7 @@ body {
 }
 
 .nav-link:hover {
-    color: var(--accent-gold) !important;
+    color: white !important;
 }
 
 /* Añadir a static/css/global.css */

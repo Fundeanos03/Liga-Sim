@@ -14,7 +14,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center fw-bold" href="{% url 'index' %}">
                 <img src="{% static 'img/logo_app.png' %}" alt="Logo" style="width: 40px; height: auto;" class="me-2">
-                <span>LIGA <span style="color: var(--accent-gold);">CORRUPTA</span></span>
+                <span>LIGA <span style="color: var(--primary-white);">CORRUPTA</span></span>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,9 +23,9 @@
 
             <div class="collapse navbar-collapse" id="navMain">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link px-3" href="#">Clasificación</a>
+                    <a class="nav-link px-3" href={%  url 'clasi' %}>Clasificación</a>
                     <a class="nav-link px-3" href="#">Mercado</a>
-                    <a class="nav-link px-3" href="#">Reglamento 💰</a>
+                    <a class="nav-link px-3" href="#">Reglamento</a>
                     <a class="nav-link px-3 fw-bold" href="{% url 'administracion' %}" style="color: var(--dark-pitch);">Administración</a>
                 </div>
             </div>
