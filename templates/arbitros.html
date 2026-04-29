@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card banner-card sidebar-sticky">
+            <div class="card-body">
+                <h5 class="fw-bold mb-4">
+                    {% if editando %}✏️ Corregir Árbitro{% else %}⚖️ Nuevo Árbitro{% endif %}
+                </h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn {% if editando %}btn-warning{% else %}btn-corrupta{% endif %} w-100 mt-2">
+                        {% if editando %}Actualizar{% else %}Guardar Árbitro{% endif %}
+                    </button>
+                    {% if editando %}
+                        <a href="{% url 'arbitros' %}" class="btn btn-link btn-sm w-100 text-muted mt-2">Cancelar</a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="header-section mb-0">Cuerpo Arbitral</h3>
+            <span class="badge-contador">Árbitros: {{ arbitros|length }}</span>
+        </div>
+
+        <div class="tabla-corrupta-container">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr class="text-muted small">
+                        <th>Nombre</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in arbitros %}
+                    <tr {% if editando and form.instance.pk == a.pk %}class="fila-editando"{% endif %}>
+                        <td>🚩 <strong>{{ a.nombre }}</strong></td>
+                        <td class="text-end">
+                            <div class="btn-group shadow-sm">
+                                <a href="{% url 'editar_arbitro' a.id %}" class="btn btn-sm btn-outline-dark">✎</a>
+                                <a href="{% url 'borrar_arbitro' a.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar?')">🗑️</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

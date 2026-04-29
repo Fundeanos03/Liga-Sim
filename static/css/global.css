@@ -18,7 +18,7 @@ body {
 .banner-card {
     border: none;
     border-radius: 12px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.3s;
     background: var(--primary-white);
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     border-left: 5px solid var(--accent-gold);
@@ -26,6 +26,7 @@ body {
 
 .banner-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
 }
 
 .header-section {
@@ -38,7 +39,26 @@ body {
     text-transform: uppercase;
 }
 
-/* Botones personalizados */
+/* Contenedores de CRUD */
+.sidebar-sticky {
+    position: sticky;
+    top: 100px;
+    z-index: 100;
+}
+
+.tabla-corrupta-container {
+    background-color: var(--primary-white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.fila-editando {
+    background-color: rgba(223, 147, 61, 0.1) !important;
+    border-left: 4px solid var(--accent-gold);
+}
+
+/* Botones y Badges */
 .btn-corrupta {
     background-color: var(--accent-gold);
     color: white;
@@ -51,12 +71,22 @@ body {
     color: var(--accent-gold);
 }
 
+.badge-contador {
+    background-color: var(--dark-pitch);
+    color: var(--accent-gold);
+    font-weight: bold;
+    padding: 0.6em 1.2em;
+    border-radius: 50px;
+    font-size: 0.85rem;
+}
+
 /* Navbar */
 .navbar-custom {
     background-color: var(--primary-white);
     border-bottom: 3px solid var(--dark-pitch);
     z-index: 1050 !important;
     position: sticky;
+    top: 0;
 }
 
 .nav-link {
@@ -64,59 +94,25 @@ body {
     font-weight: 500;
 }
 
-.nav-link:hover {
-    color: var(--accent-gold) !important;
-}
+.nav-link:hover { color: var(--accent-gold) !important; }
 
-/* Añadir a static/css/global.css */
-
-.row-cols-md-3 .card, .row-cols-md-2 .card {
-    transition: all 0.3s ease;
-}
-
-/* Efecto de elevación al pasar el ratón */
-.banner-card:hover {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    border-color: var(--accent-gold) !important;
-}
-
-/* Estilo para las secciones de administración */
-.bg-dark .header-section {
-    color: var(--accent-gold);
-    border-color: var(--accent-gold);
-}
-
-.img_peque{
+/* Otros */
+.img_peque {
     width: 30px;
-    height: auto;
+    height: 30px;
     display: block;
 }
 
+.texto-patrocinador {
+    color: var(--accent-gold) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-/* Ajustes para el menú colapsado en móvil */
 @media (max-width: 991.98px) {
     .navbar-collapse {
         background-color: var(--accent-gold);
         padding: 1rem;
         border-radius: 8px;
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 10px;
     }
-
-    .nav-link {
-        border-bottom: 1px solid #eee;
-        padding: 12px 0;
-    }
-
-    .nav-link:last-child {
-        border-bottom: none;
-    }
-}
-
-.texto-patrocinador {
-    color: var(--accent-gold) !important;
-    text-transform: uppercase; /* Opcional: para que se vea más formal */
-    letter-spacing: 1px;       /* Opcional: para darle un toque elegante */
-}
-
 }

@@ -3,12 +3,17 @@
 {% block content %}
 <div class="row">
     <div class="col-md-4 mb-4">
-        <div class="card banner-card border-0 shadow-sm sticky-top" style="top: 100px;">
+        <div class="card banner-card sidebar-sticky {% if editando %}fila-editando{% endif %}">
             <div class="card-body">
-                <h5 class="fw-bold mb-4" style="color: var(--dark-pitch);">
-                    <span style="color: var(--accent-gold);">+</span> Registrar Equipo
+                <h5 class="fw-bold mb-4">
+                    {% if editando %}
+                        <span class="text-warning">✏️</span> Editar Equipo
+                    {% else %}
+                        <span style="color: var(--accent-gold);">🛡️</span> Nuevo Equipo
+                    {% endif %}
                 </h5>
-                <form method="post">
+
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="mb-3">
@@ -19,62 +24,79 @@
                             {% endif %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="btn btn-corrupta w-100 mt-2">Guardar Equipo</button>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn {% if editando %}btn-warning{% else %}btn-corrupta{% endif %} w-100">
+                            {% if editando %}Actualizar Equipo{% else %}Guardar Equipo{% endif %}
+                        </button>
+
+                        {% if editando %}
+                            <a href="{% url 'equipos' %}" class="btn btn-link btn-sm text-muted w-100 mt-2">
+                                Cancelar edición
+                            </a>
+                        {% endif %}
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
     <div class="col-md-8">
-        <h3 class="header-section">Equipos Registrados</h3>
-        
-        <div class="table-responsive bg-white rounded shadow-sm p-3">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr class="text-muted small">
-                        <th>Nombre</th>
-                        <th>Presidente</th>
-                        <th>Estadio</th>
-                         <th>Entrenador</th>
-                        <th class="text-end">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for equipo in equipos %}
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="fs-4 me-2">
-                                    <img src="{{ equipo.escudo }}" class="img_peque">
-                                </span>
-                                <div>
-                                    <span class="fw-bold">{{ equipo.nombre }}</span>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="header-section mb-0">Equipos Registrados</h3>
+            <span class="badge-contador">Equipos: {{ equipos|length }}</span>
+        </div>
+
+        <div class="tabla-corrupta-container">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr class="text-muted small">
+                            <th>Club</th>
+                            <th>Presidente</th>
+                            <th>Estadio</th>
+                            <th>Entrenador</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in equipos %}
+                        <tr {% if editando and form.instance.pk == e.pk %}class="fila-editando"{% endif %}>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if e.escudo %}
+                                        <img src="{{ e.escudo }}" class="img_peque me-2" alt="escudo">
+                                    {% else %}
+                                        <span class="me-2">🛡️</span>
+                                    {% endif %}
+                                    <strong>{{ e.nombre }}</strong>
                                 </div>
-                            </div>
-                        </td>
-                        <td>{{ equipo.presidente }}</td>
-                        <td class="text-muted small">{{ equipo.estadio }}</td>
-                        <td class="text-muted small">{{ equipo.entrenador }}</td>
-                        <td class="text-end">
-                            <div class="btn-group shadow-sm">
-                                <a href="{% url 'editar_equipo' equipo.id %}" class="btn btn-sm btn-outline-dark" title="Editar">
-                                    ✎
-                                </a>
-                                <a href="{% url 'eliminar_equipo' equipo.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                    🗑️
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center py-5 text-muted italic">
-                            No hay equipos registrados en la red de corrupción todavía.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                            <td>{{ e.presidente }}</td>
+                            <td class="text-muted small">{{ e.estadio }}</td>
+                            <td class="text-muted small">{{ e.entrenador }}</td>
+                            <td class="text-end">
+                                <div class="btn-group shadow-sm">
+                                    <a href="{% url 'editar_equipo' e.id %}" class="btn btn-sm btn-outline-dark" title="Editar">
+                                        ✎
+                                    </a>
+                                    <a href="{% url 'eliminar_equipo' e.id %}" class="btn btn-sm btn-outline-danger"
+                                       title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar a este equipo y todos sus registros?')">
+                                        🗑️
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted italic">
+                                No hay equipos registrados en la red de corrupción todavía.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

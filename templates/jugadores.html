@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">📋 Plantillas de la Liga</h2>
+
+        <div class="d-flex gap-2">
+            <a href="{% url 'nuevo_jugador' %}" class="btn btn-success">➕ Nuevo Jugador</a>
+
+            <form action="{% url 'borrar_todos_jugadores' %}" method="post" onsubmit="return confirm('¿ESTÁS LOCO? Esto borrará a TODOS los jugadores.')">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">💀 Borrar Todo</button>
+            </form>
+        </div>
+    </div>
+
+    <form method="get" class="mb-4">
+        <select name="equipo" onchange="this.form.submit()" class="form-select w-25 border-warning">
+            <option value="">🌍 Todos los equipos</option>
+            {% for e in equipos %}
+                <option value="{{ e.id }}" {% if equipo_seleccionado == e.id|stringformat:"i" %}selected{% endif %}>{{ e.nombre }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div class="table-responsive shadow rounded">
+        <table class="table table-hover align-middle bg-white mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Jugador</th>
+                    <th>Equipo</th>
+                    <th class="text-center">Posición</th>
+                    <th class="text-center">Media</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for j in jugadores %}
+                <tr>
+                    <td><strong>{{ j.nombre }}</strong></td>
+                    <td>
+                        {% if j.equipo_actual.escudo %}
+                            <img src="{{ j.equipo_actual.escudo.url }}" class="img_peque me-2">
+                        {% endif %}
+                        {{ j.equipo_actual.nombre }}
+                    </td>
+                    <td class="text-center">{{ j.posicion }}</td>
+                    <td class="text-center fw-bold">{{ j.media }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'editar_jugador' j.id %}" class="btn btn-sm btn-outline-primary">✏️</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

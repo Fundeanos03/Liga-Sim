@@ -13,6 +13,9 @@ class Equipo(models.Model):
     estadio = models.CharField(max_length=250)
     entrenador = models.CharField(max_length=250, null=True, blank=True)
 
+    def __str__(self):
+        return self.nombre
+
 class Jugador(models.Model):
     pos_choices = (
         ('POR', 'Portero'),
@@ -23,7 +26,11 @@ class Jugador(models.Model):
     nombre = models.CharField(max_length=100)
     edad = models.IntegerField()
     posicion = models.CharField(max_length=100, choices=pos_choices)
+    media = models.IntegerField(null=True, blank=True)
     equipo_actual = models.ForeignKey(Equipo, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nombre
 
 class Temporada(models.Model):
     nombre = models.CharField(max_length=100)
@@ -68,5 +75,11 @@ class EventoPartido(models.Model):
     jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE)
     tipo_evento = models.CharField(max_length=100, choices=tipo_evento_choices)
     fecha = models.DateTimeField(default=timezone.now)
+
+class Arbitro(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
 
 
