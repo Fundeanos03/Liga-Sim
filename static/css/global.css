@@ -53,8 +53,10 @@ body {
 
 /* Navbar */
 .navbar-custom {
-    background-color: var(--accent-gold);
+    background-color: var(--primary-white);
     border-bottom: 3px solid var(--dark-pitch);
+    z-index: 1050 !important;
+    position: sticky;
 }
 
 .nav-link {
@@ -63,7 +65,7 @@ body {
 }
 
 .nav-link:hover {
-    color: white !important;
+    color: var(--accent-gold) !important;
 }
 
 /* Añadir a static/css/global.css */
@@ -87,23 +89,34 @@ body {
 .img_peque{
     width: 30px;
     height: auto;
+    display: block;
 }
 
 
 /* Ajustes para el menú colapsado en móvil */
 @media (max-width: 991.98px) {
     .navbar-collapse {
-        background-color: var(--primary-white);
+        background-color: var(--accent-gold);
         padding: 1rem;
         border-radius: 8px;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         margin-top: 10px;
     }
+
     .nav-link {
         border-bottom: 1px solid #eee;
         padding: 12px 0;
     }
+
     .nav-link:last-child {
         border-bottom: none;
     }
+}
+
+.texto-patrocinador {
+    color: var(--accent-gold) !important;
+    text-transform: uppercase; /* Opcional: para que se vea más formal */
+    letter-spacing: 1px;       /* Opcional: para darle un toque elegante */
+}
+
 }
