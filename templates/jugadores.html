@@ -6,6 +6,8 @@
         <h2 class="header-section mb-0">Plantillas de la Liga</h2>
 
         <div class="d-flex gap-2">
+            <a href="{% url 'cargar_jugadores_csv' %}" class="btn btn-outline-primary">📥 Carga Masiva</a>
+
             <a href="{% url 'nuevo_jugador' %}" class="btn btn-success">➕ Nuevo Jugador</a>
 
             <form action="{% url 'borrar_todos_jugadores' %}" method="post" onsubmit="return confirm('¿ESTÁS LOCO? Esto borrará a TODOS los jugadores.')">
@@ -31,6 +33,7 @@
                     <th>Nombre</th>
                     <th>Equipo</th>
                     <th class="text-center">Pos</th>
+                    <th class="text-center">Edad</th>
                     <th class="text-center">Media</th>
                     <th class="text-end">Acciones</th>
                 </tr>
@@ -48,6 +51,9 @@
                         </div>
                     </td>
                     <td class="text-center"><span class="badge bg-light text-dark border">{{ j.posicion }}</span></td>
+
+                    <td class="text-center">{{ j.edad }}</td>
+
                     <td class="text-center fw-bold">{{ j.media }}</td>
                     <td class="text-end">
                         <div class="btn-group shadow-sm">
@@ -58,7 +64,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">No hay activos registrados en este sector.</td>
+                    <td colspan="6" class="text-center py-4 text-muted">No hay activos registrados en este sector.</td>
                 </tr>
                 {% endfor %}
             </tbody>

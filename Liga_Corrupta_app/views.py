@@ -235,8 +235,6 @@ def tabla_clasificacion(request, temporada_id):
             temporada=temporada
         )
 
-        # Si aún no tienes modelo de tarjetas, los dejamos a 0
-        # Pero la lógica ya está lista para cuando los tengas
         amarillas = 0
         rojas = 0
 
@@ -289,3 +287,33 @@ def tabla_clasificacion(request, temporada_id):
     ))
 
     return render(request, 'clasi.html', {'tabla': tabla, 'temporada': temporada})
+
+
+def lista_temporadas(request):
+    temporadas = Temporada.objects.all().order_by('-id')
+    return render(request, 'temporadas/lista.html', {'temporadas': temporadas})
+
+
+def nueva_temporada(request):
+    if request.method == "POST":
+        nombre = request.POST.get('nombre')
+        # Si marca esta como activa, desactivamos las demás
+        activa = request.POST.get('activa') == 'on'
+
+        if activa:
+            Temporada.objects.all().update(activa=False)
+
+        Temporada.objects.create(nombre=nombre, activa=activa)
+        messages.success(request, "¡Temporada inaugurada con éxito!")
+        return redirect('lista_temporadas')
+
+    return render(request, 'temporadas/nueva.html')
+
+
+def activar_temporada(request, temporada_id):
+    Temporada.objects.all().update(activa=False)
+    temp = get_object_or_404(Temporada, id=temporada_id)
+    temp.activa = True
+    temp.save()
+    messages.success(request, f"Ahora la temporada activa es: {temp.nombre}")
+    return redirect('lista_temporadas')

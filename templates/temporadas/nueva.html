@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0" style="max-width: 500px; margin: auto;">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Nueva Temporada</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre de la Temporada</label>
+                    <input type="text" name="nombre" class="form-control" placeholder="Ej: Apertura 2026 - Corrupción Total" required>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="activa" id="activaCheck" checked>
+                    <label class="form-check-label" for="activaCheck">Establecer como Temporada Activa</label>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-warning fw-bold">Lanzar Temporada</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
