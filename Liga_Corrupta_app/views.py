@@ -1,7 +1,9 @@
 import csv
 import io
 
+import unicodedata
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
@@ -9,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
 from Liga_Corrupta_app.forms import EquipoForm, ArbitroForm, JugadorForm
-from Liga_Corrupta_app.models import Equipo, Arbitro, Jugador
+from Liga_Corrupta_app.models import Equipo, Arbitro, Jugador, Temporada, Partido
 
 
 def index(request):
@@ -89,7 +91,7 @@ def gestionar_jugadores(request):
         jugadores = Jugador.objects.filter(equipo_actual_id=equipo_id)
     else:
         # Los ordenamos por media para ver a los mejores arriba
-        jugadores = Jugador.objects.all().order_by('-media')
+        jugadores = Jugador.objects.all().order_by('-equipo_actual')
 
     return render(request, "jugadores.html", {
         'jugadores': jugadores,
@@ -145,59 +147,145 @@ def borrar_todos_jugadores(request):
 
 
 # 6. CARGA MASIVA DE JUGADORES (TU FUNCIÓN MEJORADA)
+def eliminar_tildes(cadena):
+    """Transforma 'MÁLAGA' en 'MALAGA' para comparaciones seguras"""
+    return "".join(c for c in unicodedata.normalize('NFD', cadena) if unicodedata.category(c) != 'Mn')
+
+
 def cargar_jugadores_csv(request):
     if request.method == "POST":
         archivo = request.FILES.get('archivo_csv')
+
         if not archivo or not archivo.name.endswith('.csv'):
-            messages.error(request, "Sube un .csv, compadre.")
+            messages.error(request, "El archivo debe ser un formato .csv")
             return redirect('cargar_jugadores_csv')
 
         try:
-            data = archivo.read().decode('UTF-8')
-            io_string = io.StringIO(data)
-            next(io_string)  # Saltamos cabecera
+            # Leemos el archivo
+            contenido = archivo.read()
+            try:
+                data = contenido.decode('utf-8-sig')
+            except UnicodeDecodeError:
+                data = contenido.decode('latin-1')
 
-            creados, errores = 0, 0
+            io_string = io.StringIO(data)
+            next(io_string)  # Saltar cabecera
+
+            creados = 0
+            errores = 0
+
+            # Traemos todos los equipos de la DB una sola vez para ahorrar tiempo
+            equipos_en_db = list(Equipo.objects.all())
+
             for row in csv.reader(io_string, delimiter=','):
+                if not row or len(row) < 5:
+                    continue
+
                 try:
-                    nombre_j = row[0].strip()
-                    nombre_e = row[1].strip()
+                    nombre_jugador = row[0].strip()
+                    nombre_equipo_csv = row[1].strip()
                     pos = row[2].strip().upper()[:3]
                     edad = int(row[3])
                     media = int(row[4]) if row[4] else None
 
-                    equipo = Equipo.objects.filter(nombre__iexact=nombre_e).first()
+                    # --- LÓGICA DE BÚSQUEDA ROBUSTA ---
+                    equipo = None
+                    nombre_csv_comparar = eliminar_tildes(nombre_equipo_csv).lower()
+
+                    for e in equipos_en_db:
+                        if eliminar_tildes(e.nombre).lower() == nombre_csv_comparar:
+                            equipo = e
+                            break
+
                     if equipo:
-                        Jugador.objects.create(nombre=nombre_j, equipo_actual=equipo, posicion=pos, edad=edad,
-                                               media=media)
+                        Jugador.objects.create(
+                            nombre=nombre_jugador,
+                            equipo_actual=equipo,
+                            posicion=pos,
+                            edad=edad,
+                            media=media
+                        )
                         creados += 1
                     else:
+                        print(f"❌ ERROR: No se encontró el equipo '{nombre_equipo_csv}'")
                         errores += 1
-                except:
+
+                except Exception as e:
+                    print(f"Error en fila {row}: {e}")
                     errores += 1
 
-            messages.success(request, f"Carga terminada. Creados: {creados}. Fallos: {errores}")
+            messages.success(request, f"✅ Carga terminada: {creados} creados. ❌ Fallos: {errores}")
             return redirect('jugadores')
+
         except Exception as e:
-            messages.error(request, f"Error crítico: {e}")
+            messages.error(request, f"Error crítico al leer el archivo: {e}")
             return redirect('cargar_jugadores_csv')
 
     return render(request, "cargar_csv.html")
 
 
-# 7. CARGA MASIVA DE EQUIPOS
-def cargar_equipos_csv(request):
-    if request.method == "POST":
-        archivo = request.FILES.get('archivo_csv_equipos')  # Cambia el name en el HTML si quieres
-        if archivo and archivo.name.endswith('.csv'):
-            data = archivo.read().decode('UTF-8')
-            io_string = io.StringIO(data)
-            for row in csv.reader(io_string, delimiter=','):
-                if row:
-                    nombre_e = row[0].strip()
-                    # Creamos el equipo si no existe
-                    Equipo.objects.get_or_create(nombre=nombre_e)
-            messages.success(request, "Equipos cargados.")
-        else:
-            messages.error(request, "Archivo no válido.")
-    return redirect('administracion')
+def tabla_clasificacion(request, temporada_id):
+    temporada = get_object_or_404(Temporada, id=temporada_id)
+    equipos = Equipo.objects.all()
+    tabla = []
+
+    for equipo in equipos:
+        partidos = Partido.objects.filter(
+            Q(equipo_local=equipo) | Q(equipo_visitante=equipo),
+            temporada=temporada
+        )
+
+        # Si aún no tienes modelo de tarjetas, los dejamos a 0
+        # Pero la lógica ya está lista para cuando los tengas
+        amarillas = 0
+        rojas = 0
+
+        stats = {
+            'equipo': equipo,
+            'nombre': equipo.nombre.lower(),
+            'pj': 0, 'pg': 0, 'pe': 0, 'pp': 0,
+            'gf': 0, 'gc': 0, 'puntos': 0,
+            'dg': 0,
+            'amarillas': amarillas,
+            'rojas': rojas
+        }
+
+        for p in partidos:
+            stats['pj'] += 1
+            if p.equipo_local == equipo:
+                stats['gf'] += p.goles_local
+                stats['gc'] += p.goles_visitante
+                if p.goles_local > p.goles_visitante:
+                    stats['pg'] += 1
+                    stats['puntos'] += 3
+                elif p.goles_local == p.goles_visitante:
+                    stats['pe'] += 1
+                    stats['puntos'] += 1
+                else:
+                    stats['pp'] += 1
+            else:
+                stats['gf'] += p.goles_visitante
+                stats['gc'] += p.goles_local
+                if p.goles_visitante > p.goles_local:
+                    stats['pg'] += 1
+                    stats['puntos'] += 3
+                elif p.goles_visitante == p.goles_local:
+                    stats['pe'] += 1
+                    stats['puntos'] += 1
+                else:
+                    stats['pp'] += 1
+
+        stats['dg'] = stats['gf'] - stats['gc']
+        tabla.append(stats)
+
+    # ORDEN: Puntos, DG, GF, Amarillas, Rojas, Nombre
+    tabla = sorted(tabla, key=lambda x: (
+        -x['puntos'],
+        -x['dg'],
+        -x['gf'],
+        x['amarillas'],
+        x['rojas'],
+        x['nombre']
+    ))
+
+    return render(request, 'clasi.html', {'tabla': tabla, 'temporada': temporada})

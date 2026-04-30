@@ -27,6 +27,4 @@ urlpatterns = [
     path('jugadores/eliminar/<int:pk>/', views.eliminar_jugador, name='eliminar_jugador'),
     path('jugadores/borrar-todo/', views.borrar_todos_jugadores, name='borrar_todos_jugadores'),  # NUEVA
 
-    # Ruta para cargar equipos de golpe
-    path('equipos/cargar-masivo/', views.cargar_equipos_csv, name='cargar_equipos_csv'),  # NUEVA
 ]
