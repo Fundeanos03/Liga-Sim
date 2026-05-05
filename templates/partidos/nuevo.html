@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white py-3">
+            <h5 class="mb-0 fw-bold">📝 Registrar Nuevo Partido</h5>
+            <small class="text-muted">Temporada actual: {{ temporada.nombre }}</small>
+        </div>
+
+        <div class="card-body p-4">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row g-4 mb-4">
+                    <!-- Equipo Local -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-uppercase text-muted">Equipo Local</label>
+                        <select name="local" class="form-select form-select-lg border-2" required>
+                            <option value="" selected disabled>Seleccionar...</option>
+                            {% for equipo in equipos %}
+                                <option value="{{ equipo.id }}">{{ equipo.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="mt-2 text-center">
+                            <input type="number" name="goles_l" class="form-control form-control-lg text-center fw-bold border-2"
+                                   placeholder="Goles" min="0" value="0" required>
+                        </div>
+                    </div>
+
+                    <!-- Equipo Visitante -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-uppercase text-muted">Equipo Visitante</label>
+                        <select name="visitante" class="form-select form-select-lg border-2" required>
+                            <option value="" selected disabled>Seleccionar...</option>
+                            {% for equipo in equipos %}
+                                <option value="{{ equipo.id }}">{{ equipo.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="mt-2 text-center">
+                            <input type="number" name="goles_v" class="form-control form-control-lg text-center fw-bold border-2"
+                                   placeholder="Goles" min="0" value="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAMPO JORNADA MANUAL -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Número de Jornada</label>
+                    <input type="number" name="jornada" class="form-control form-control-lg border-2 shadow-sm"
+                           placeholder="Ej: 1" min="1" required style="border-color: #dee2e6;">
+                    <div class="form-text small mt-2">Indica manualmente a qué jornada pertenece este encuentro.</div>
+                </div>
+
+                <hr class="my-4 text-muted">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{% url 'administracion' %}" class="text-decoration-none text-muted fw-bold small">
+                        <i class="bi bi-chevron-left"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary px-5 fw-bold shadow">
+                        Continuar a Eventos ➡️
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

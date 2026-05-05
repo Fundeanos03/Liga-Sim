@@ -4,14 +4,16 @@ import io
 import unicodedata
 from django.contrib import messages
 from django.db.models import Q
+from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
 
 from django.http import HttpResponse
+from django.utils import timezone
 
 from Liga_Corrupta_app.forms import EquipoForm, ArbitroForm, JugadorForm
-from Liga_Corrupta_app.models import Equipo, Arbitro, Jugador, Temporada, Partido
+from Liga_Corrupta_app.models import Equipo, Arbitro, Jugador, Temporada, Partido, EventoPartido
 
 
 def index(request):
@@ -224,83 +226,45 @@ def cargar_jugadores_csv(request):
     return render(request, "cargar_csv.html")
 
 
-def tabla_clasificacion(request, temporada_id):
-    temporada = get_object_or_404(Temporada, id=temporada_id)
+def tabla_clasificacion(request, temporada_id=None):
+    # Lógica para buscar la temporada activa
+    if temporada_id:
+        temporada = get_object_or_404(Temporada, id=temporada_id)
+    else:
+        temporada = Temporada.objects.filter(activa=True).first() or Temporada.objects.last()
+
+    if not temporada:
+        return render(request, 'clasi.html', {'tabla': [], 'error': "No hay temporadas"})
+
     equipos = Equipo.objects.all()
     tabla = []
 
     for equipo in equipos:
-        partidos = Partido.objects.filter(
-            Q(equipo_local=equipo) | Q(equipo_visitante=equipo),
-            temporada=temporada
-        )
-
-        amarillas = 0
-        rojas = 0
-
+        # ... (aquí va tu lógica de calcular PJ, PG, PE, PP, Puntos) ...
         stats = {
             'equipo': equipo,
-            'nombre': equipo.nombre.lower(),
             'pj': 0, 'pg': 0, 'pe': 0, 'pp': 0,
-            'gf': 0, 'gc': 0, 'puntos': 0,
-            'dg': 0,
-            'amarillas': amarillas,
-            'rojas': rojas
+            'gf': 0, 'gc': 0, 'puntos': 0, 'dg': 0
         }
-
-        for p in partidos:
-            stats['pj'] += 1
-            if p.equipo_local == equipo:
-                stats['gf'] += p.goles_local
-                stats['gc'] += p.goles_visitante
-                if p.goles_local > p.goles_visitante:
-                    stats['pg'] += 1
-                    stats['puntos'] += 3
-                elif p.goles_local == p.goles_visitante:
-                    stats['pe'] += 1
-                    stats['puntos'] += 1
-                else:
-                    stats['pp'] += 1
-            else:
-                stats['gf'] += p.goles_visitante
-                stats['gc'] += p.goles_local
-                if p.goles_visitante > p.goles_local:
-                    stats['pg'] += 1
-                    stats['puntos'] += 3
-                elif p.goles_visitante == p.goles_local:
-                    stats['pe'] += 1
-                    stats['puntos'] += 1
-                else:
-                    stats['pp'] += 1
-
-        stats['dg'] = stats['gf'] - stats['gc']
         tabla.append(stats)
 
-    # ORDEN: Puntos, DG, GF, Amarillas, Rojas, Nombre
-    tabla = sorted(tabla, key=lambda x: (
-        -x['puntos'],
-        -x['dg'],
-        -x['gf'],
-        x['amarillas'],
-        x['rojas'],
-        x['nombre']
-    ))
-
+    # Enviamos 'tabla' al template 'clasi.html'
     return render(request, 'clasi.html', {'tabla': tabla, 'temporada': temporada})
 
+
+# --- VISTAS DE TEMPORADAS ---
 
 def lista_temporadas(request):
     temporadas = Temporada.objects.all().order_by('-id')
     return render(request, 'temporadas/lista.html', {'temporadas': temporadas})
 
-
 def nueva_temporada(request):
     if request.method == "POST":
         nombre = request.POST.get('nombre')
-        # Si marca esta como activa, desactivamos las demás
         activa = request.POST.get('activa') == 'on'
 
         if activa:
+            # Si marcamos esta como activa, las demás dejan de serlo
             Temporada.objects.all().update(activa=False)
 
         Temporada.objects.create(nombre=nombre, activa=activa)
@@ -309,7 +273,6 @@ def nueva_temporada(request):
 
     return render(request, 'temporadas/nueva.html')
 
-
 def activar_temporada(request, temporada_id):
     Temporada.objects.all().update(activa=False)
     temp = get_object_or_404(Temporada, id=temporada_id)
@@ -317,3 +280,85 @@ def activar_temporada(request, temporada_id):
     temp.save()
     messages.success(request, f"Ahora la temporada activa es: {temp.nombre}")
     return redirect('lista_temporadas')
+
+# --- VISTA ADMINISTRADOR ACTUALIZADA ---
+# Sustituye tu 'def vista_administrador' por esta para que detecte la temporada
+def vista_administrador(request):
+    temporada_activa = Temporada.objects.filter(activa=True).first()
+    return render(request, "administrador.html", {'temporada_activa': temporada_activa})
+
+
+def lista_partidos(request):
+    temp_activa = Temporada.objects.filter(activa=True).first()
+
+    if temp_activa:
+        # Ordenamos por jornada para que la 1 salga antes que la 2
+        partidos = Partido.objects.filter(temporada=temp_activa).order_by('jornada')
+    else:
+        partidos = []
+
+    return render(request, 'partidos/lista.html', {
+        'partidos': partidos,
+        'temporada': temp_activa
+    })
+
+
+def nuevo_partido(request):
+    equipos = Equipo.objects.all().order_by('nombre')
+    temp_activa = Temporada.objects.filter(activa=True).first()
+
+    if request.method == "POST":
+        local_id = request.POST.get('local')
+        visitante_id = request.POST.get('visitante')
+        g_l = request.POST.get('goles_l')
+        g_v = request.POST.get('goles_v')
+        num_jornada = request.POST.get('jornada')
+
+        nuevo_p = Partido.objects.create(
+            temporada=temp_activa,
+            equipo_local_id=local_id,
+            equipo_visitante_id=visitante_id,
+            goles_local=g_l,
+            goles_visitante=g_v,
+            jornada=num_jornada  # LO GUARDAMOS
+        )
+
+        return redirect('editar_partido_eventos', partido_id=nuevo_p.id)
+
+    return render(request, 'partidos/nuevo.html', {
+        'equipos': equipos,
+        'temporada': temp_activa
+    })
+
+
+def editar_partido_eventos(request, partido_id):
+    partido = get_object_or_404(Partido, id=partido_id)
+
+    # Creamos una fábrica de formularios: Partido + sus Eventos
+    # 'extra=1' significa que siempre habrá una fila vacía al final para añadir uno nuevo
+    EventoFormSet = inlineformset_factory(
+        Partido, EventoPartido,
+        fields=('jugador', 'tipo_evento'),
+        extra=1,
+        can_delete=True
+    )
+
+    if request.method == "POST":
+        # Cargamos los datos del marcador del partido
+        partido.goles_local = request.POST.get('goles_local')
+        partido.goles_visitante = request.POST.get('goles_visitante')
+        partido.save()
+
+        # Cargamos y validamos los eventos (goles, tarjetas, etc.)
+        formset = EventoFormSet(request.POST, instance=partido)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "Acta de partido actualizada.")
+            return redirect('lista_partidos')
+    else:
+        formset = EventoFormSet(instance=partido)
+
+    return render(request, 'partidos/editar_eventos.html', {
+        'partido': partido,
+        'formset': formset
+    })

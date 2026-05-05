@@ -57,7 +57,10 @@ class Partido(models.Model):
     equipo_visitante = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='visitante')
     goles_local = models.IntegerField()
     goles_visitante = models.IntegerField()
-    fecha = models.DateTimeField(default=timezone.now)
+    jornada = models.IntegerField(default=1)
+
+    def __str__(self):
+        return t"Jornada {self.jornada}: {self.equipo_local} vs {self.equipo_visitante}"
 
 
 class EventoPartido(models.Model):

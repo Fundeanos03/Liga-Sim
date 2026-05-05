@@ -8,6 +8,7 @@
             <p class="text-muted mb-0">Gestión total de la base de datos y operaciones encubiertas.</p>
         </div>
         <div class="text-end">
+            <!-- Badge de temporada activa que ya tienes configurado -->
             <span class="badge {% if temporada_activa %}bg-primary{% else %}bg-danger{% endif %} p-2">
                 {% if temporada_activa %}
                     📅 Temporada: {{ temporada_activa.nombre }}
@@ -19,9 +20,11 @@
     </div>
 </div>
 
+<!-- SECCIÓN: GESTIÓN DEPORTIVA -->
 <h5 class="header-section mt-4">Gestión Deportiva</h5>
 <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
 
+    <!-- Equipos -->
     <div class="col">
         <div class="card h-100 banner-card border-0 shadow-sm">
             <div class="card-body text-center py-4">
@@ -35,6 +38,7 @@
         </div>
     </div>
 
+    <!-- Jugadores -->
     <div class="col">
         <div class="card h-100 banner-card border-0 shadow-sm">
             <div class="card-body text-center py-4">
@@ -49,6 +53,7 @@
         </div>
     </div>
 
+    <!-- Temporadas -->
     <div class="col">
         <div class="card h-100 banner-card border-0 shadow-sm">
             <div class="card-body text-center py-4">
@@ -62,6 +67,7 @@
         </div>
     </div>
 
+    <!-- Árbitros -->
     <div class="col">
         <div class="card h-100 banner-card border-0 shadow-sm">
             <div class="card-body text-center py-4">
@@ -76,9 +82,11 @@
     </div>
 </div>
 
+<!-- SECCIÓN: COMPETICIÓN Y ACTAS -->
 <h5 class="header-section">Competición y Actas</h5>
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
 
+    <!-- Partidos -->
     <div class="col">
         <div class="card h-100 banner-card border-0 shadow-sm">
             <div class="card-body d-flex align-items-center p-4">
@@ -88,12 +96,14 @@
                     <p class="text-muted small mb-0">Resultados, fechas y emparejamientos.</p>
                 </div>
                 <div class="ms-3">
-                    <a href="#" class="btn btn-corrupta">Ir al CRUD</a>
+                    <!-- Conectado a la lista de partidos -->
+                    <a href="{% url 'lista_partidos' %}" class="btn btn-corrupta">Ir al CRUD</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Eventos (Actas) -->
     <div class="col">
         <div class="card h-100 banner-card border-0 shadow-sm">
             <div class="card-body d-flex align-items-center p-4">
@@ -103,13 +113,15 @@
                     <p class="text-muted small mb-0">Goles, tarjetas y "accidentes" en el campo.</p>
                 </div>
                 <div class="ms-3">
-                    <a href="#" class="btn btn-corrupta">Ir al CRUD</a>
+                    <!-- Conectado directamente a crear un nuevo partido/acta -->
+                    <a href="{% url 'nuevo_partido' %}" class="btn btn-outline-dark fw-bold">Crear Acta</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- SECCIÓN: FINANZAS -->
 <h5 class="header-section">Finanzas y Movimientos</h5>
 <div class="row mb-5">
     <div class="col-12">
@@ -123,6 +135,7 @@
                     </div>
                 </div>
                 <div>
+                    <!-- Este enlace puedes conectarlo más adelante -->
                     <a href="#" class="btn btn-light fw-bold">Gestionar Transacciones</a>
                 </div>
             </div>
